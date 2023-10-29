@@ -24,7 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ***********************************************************************************/
-// SwitchOp.C
+// switchOp.C
 
 static const char* const CLASS = "switchOp";
 static const char* const HELP =
@@ -54,7 +54,7 @@ static const char* const operator_names[] = {
 	"IN", "NOT IN", nullptr
 };
 
-static const int MAX_INPUTS = 15;
+static const int MAX_INPUTS = 16;
 
 class switchOp : public NoIop
 {
@@ -98,7 +98,7 @@ public:
 		itrRightKnob = _stringRightKnob.begin();
 		itrOpT = op_type.begin();
 
-		int n = 0;
+		int n = 1;
 		bool _findedTrue;
 		std::string valueLeft, valueRight;
 		std::size_t found;
@@ -127,16 +127,17 @@ public:
 
 		if (n < MAX_INPUTS) {
 			inputNum = n;
-			input(inputNum)->validate(for_real);
-			copy_info(inputNum);
-			raw_channels_from(inputNum);
-			info_.set(input(inputNum)->info());
-			set_out_channels(Mask_None);
+
 		}
 		else {
 			inputNum = 0;
-			info_.turn_off(input(inputNum)->channels());
 		}		
+
+		input(inputNum)->validate(for_real);
+		copy_info(inputNum);
+		raw_channels_from(inputNum);
+		info_.set(input(inputNum)->info());
+		set_out_channels(Mask_None);
 		
 	}
 
@@ -159,116 +160,107 @@ public:
 	void knobs(Knob_Callback f) override
 	{
 
+		Text_knob(f, "input1", "First input will be active if all conditions are False"); SetFlags(f, Knob::STARTLINE);
+
 		itrLeftKnob = _stringLeftKnob.begin();
 		itrRightKnob = _stringRightKnob.begin();
-
 		itrOpT = op_type.begin();
 
-		String_knob(f, &*itrLeftKnob, "leftvalue0", ""); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::EARLY_STORE);
-		Enumeration_knob(f, &*itrOpT, operator_names, "op0", ""); SetFlags(f, Knob::EARLY_STORE);
+		String_knob(f, &*itrLeftKnob, "leftvalue2", "input2 expression"); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::EARLY_STORE);
+		Enumeration_knob(f, &*itrOpT, operator_names, "op2", ""); SetFlags(f, Knob::EARLY_STORE);
 		Tooltip(f, "Select the binary operation between the fields.\nIN: true if left value is in right list \nNOT IN: inverse as in");
-		String_knob(f, &*itrRightKnob, "rightvalue0", ""); //SetFlags(f, Knob::EARLY_STORE);
+		String_knob(f, &*itrRightKnob, "rightvalue2", ""); SetFlags(f, Knob::EARLY_STORE);
 
 		++itrLeftKnob; ++itrRightKnob; ++itrOpT;
 
-		String_knob(f, &*itrLeftKnob, "leftvalue1", ""); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::EARLY_STORE);
-		Enumeration_knob(f, &*itrOpT, operator_names, "op1", ""); SetFlags(f, Knob::EARLY_STORE);
+		String_knob(f, &*itrLeftKnob, "leftvalue3", "input3 expression"); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
+		Enumeration_knob(f, &*itrOpT, operator_names, "op3", ""); SetFlags(f, Knob::EARLY_STORE); SetFlags(f, Knob::HIDDEN);
 		Tooltip(f, "Select the binary operation between the fields.\nIN: true if left value is in right list \nNOT IN: inverse as in");
-		String_knob(f, &*itrRightKnob, "rightvalue1", ""); //SetFlags(f, Knob::EARLY_STORE);
+		String_knob(f, &*itrRightKnob, "rightvalue3", ""); SetFlags(f, Knob::EARLY_STORE); SetFlags(f, Knob::HIDDEN);
 
 		++itrLeftKnob; ++itrRightKnob; ++itrOpT;
 
-		String_knob(f, &*itrLeftKnob, "leftvalue2", ""); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
-		Enumeration_knob(f, &*itrOpT, operator_names, "op2", ""); SetFlags(f, Knob::HIDDEN);
-		Tooltip(f, "Select the binary operation between the fields.\nIN: true if left value is in right list \nNOT IN: inverse as in");
-		String_knob(f, &*itrRightKnob, "rightvalue2", ""); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
-
-		++itrLeftKnob; ++itrRightKnob; ++itrOpT;
-
-		String_knob(f, &*itrLeftKnob, "leftvalue3", ""); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
-		Enumeration_knob(f, &*itrOpT, operator_names, "op3", ""); SetFlags(f, Knob::HIDDEN);
-		Tooltip(f, "Select the binary operation between the fields.\nIN: true if left value is in right list \nNOT IN: inverse as in");
-		String_knob(f, &*itrRightKnob, "rightvalue3", ""); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
-
-		++itrLeftKnob; ++itrRightKnob; ++itrOpT;
-
-		String_knob(f, &*itrLeftKnob, "leftvalue4", ""); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
+		String_knob(f, &*itrLeftKnob, "leftvalue4", "input4 expression"); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
 		Enumeration_knob(f, &*itrOpT, operator_names, "op4", ""); SetFlags(f, Knob::HIDDEN);
 		Tooltip(f, "Select the binary operation between the fields.\nIN: true if left value is in right list \nNOT IN: inverse as in");
 		String_knob(f, &*itrRightKnob, "rightvalue4", ""); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
 
 		++itrLeftKnob; ++itrRightKnob; ++itrOpT;
 
-		String_knob(f, &*itrLeftKnob, "leftvalue5", ""); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
+		String_knob(f, &*itrLeftKnob, "leftvalue5", "input5 expression"); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
 		Enumeration_knob(f, &*itrOpT, operator_names, "op5", ""); SetFlags(f, Knob::HIDDEN);
 		Tooltip(f, "Select the binary operation between the fields.\nIN: true if left value is in right list \nNOT IN: inverse as in");
 		String_knob(f, &*itrRightKnob, "rightvalue5", ""); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
 
 		++itrLeftKnob; ++itrRightKnob; ++itrOpT;
 
-		String_knob(f, &*itrLeftKnob, "leftvalue6", ""); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
+		String_knob(f, &*itrLeftKnob, "leftvalue6", "input6 expression"); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
 		Enumeration_knob(f, &*itrOpT, operator_names, "op6", ""); SetFlags(f, Knob::HIDDEN);
 		Tooltip(f, "Select the binary operation between the fields.\nIN: true if left value is in right list \nNOT IN: inverse as in");
 		String_knob(f, &*itrRightKnob, "rightvalue6", ""); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
 
 		++itrLeftKnob; ++itrRightKnob; ++itrOpT;
 
-		String_knob(f, &*itrLeftKnob, "leftvalue7", ""); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
+		String_knob(f, &*itrLeftKnob, "leftvalue7", "input7 expression"); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
 		Enumeration_knob(f, &*itrOpT, operator_names, "op7", ""); SetFlags(f, Knob::HIDDEN);
 		Tooltip(f, "Select the binary operation between the fields.\nIN: true if left value is in right list \nNOT IN: inverse as in");
 		String_knob(f, &*itrRightKnob, "rightvalue7", ""); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
 
 		++itrLeftKnob; ++itrRightKnob; ++itrOpT;
 
-		String_knob(f, &*itrLeftKnob, "leftvalue8", ""); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
+		String_knob(f, &*itrLeftKnob, "leftvalue8", "input8 expression"); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
 		Enumeration_knob(f, &*itrOpT, operator_names, "op8", ""); SetFlags(f, Knob::HIDDEN);
 		Tooltip(f, "Select the binary operation between the fields.\nIN: true if left value is in right list \nNOT IN: inverse as in");
 		String_knob(f, &*itrRightKnob, "rightvalue8", ""); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
 
 		++itrLeftKnob; ++itrRightKnob; ++itrOpT;
 
-		String_knob(f, &*itrLeftKnob, "leftvalue9", ""); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
+		String_knob(f, &*itrLeftKnob, "leftvalue9", "input9 expression"); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
 		Enumeration_knob(f, &*itrOpT, operator_names, "op9", ""); SetFlags(f, Knob::HIDDEN);
 		Tooltip(f, "Select the binary operation between the fields.\nIN: true if left value is in right list \nNOT IN: inverse as in");
 		String_knob(f, &*itrRightKnob, "rightvalue9", ""); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
 
 		++itrLeftKnob; ++itrRightKnob; ++itrOpT;
 		
-		String_knob(f, &*itrLeftKnob, "leftvalue10", ""); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
+		String_knob(f, &*itrLeftKnob, "leftvalue10", "input10 expression"); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
 		Enumeration_knob(f, &*itrOpT, operator_names, "op10", ""); SetFlags(f, Knob::HIDDEN);
 		Tooltip(f, "Select the binary operation between the fields.\nIN: true if left value is in right list \nNOT IN: inverse as in");
 		String_knob(f, &*itrRightKnob, "rightvalue10", ""); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
 
 		++itrLeftKnob; ++itrRightKnob; ++itrOpT;
 
-		String_knob(f, &*itrLeftKnob, "leftvalue11", ""); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
+		String_knob(f, &*itrLeftKnob, "leftvalue11", "input11 expression"); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
 		Enumeration_knob(f, &*itrOpT, operator_names, "op11", ""); SetFlags(f, Knob::HIDDEN);
 		Tooltip(f, "Select the binary operation between the fields.\nIN: true if left value is in right list \nNOT IN: inverse as in");
 		String_knob(f, &*itrRightKnob, "rightvalue11", ""); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
 
 		++itrLeftKnob; ++itrRightKnob; ++itrOpT;
 
-		String_knob(f, &*itrLeftKnob, "leftvalue12", ""); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
+		String_knob(f, &*itrLeftKnob, "leftvalue12", "input12 expression"); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
 		Enumeration_knob(f, &*itrOpT, operator_names, "op12", ""); SetFlags(f, Knob::HIDDEN);
 		Tooltip(f, "Select the binary operation between the fields.\nIN: true if left value is in right list \nNOT IN: inverse as in");
 		String_knob(f, &*itrRightKnob, "rightvalue12", ""); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
 
 		++itrLeftKnob; ++itrRightKnob; ++itrOpT;
 
-		String_knob(f, &*itrLeftKnob, "leftvalue13", ""); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
+		String_knob(f, &*itrLeftKnob, "leftvalue13", "input13expression"); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
 		Enumeration_knob(f, &*itrOpT, operator_names, "op13", ""); SetFlags(f, Knob::HIDDEN);
 		Tooltip(f, "Select the binary operation between the fields.\nIN: true if left value is in right list \nNOT IN: inverse as in");
 		String_knob(f, &*itrRightKnob, "rightvalue13", ""); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
 
 		++itrLeftKnob; ++itrRightKnob; ++itrOpT;
 
-		String_knob(f, &*itrLeftKnob, "leftvalue14", ""); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
+		String_knob(f, &*itrLeftKnob, "leftvalue14", "input14 expression"); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
 		Enumeration_knob(f, &*itrOpT, operator_names, "op14", ""); SetFlags(f, Knob::HIDDEN);
 		Tooltip(f, "Select the binary operation between the fields.\nIN: true if left value is in right list \nNOT IN: inverse as in");
 		String_knob(f, &*itrRightKnob, "rightvalue14", ""); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
 
 		++itrLeftKnob; ++itrRightKnob; ++itrOpT;
-	
+
+		String_knob(f, &*itrLeftKnob, "leftvalue15", "input15 expression"); SetFlags(f, Knob::STARTLINE); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);
+		Enumeration_knob(f, &*itrOpT, operator_names, "op15", ""); SetFlags(f, Knob::HIDDEN);
+		Tooltip(f, "Select the binary operation between the fields.\nIN: true if left value is in right list \nNOT IN: inverse as in");
+		String_knob(f, &*itrRightKnob, "rightvalue15", ""); SetFlags(f, Knob::HIDDEN); SetFlags(f, Knob::EARLY_STORE);	
 		
 	}
 
